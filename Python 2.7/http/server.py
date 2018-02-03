@@ -14,20 +14,21 @@ import socket
 from logging.handlers import RotatingFileHandler
 import ssl
 
-listening_ip="172.16.0.10"
+listening_ip="0.0.0.0"
 listening_port=8443
 
-def rand_string(n=8):
-	res = ""
+def RND(n=8):
+	r = ""
 	for i in range(n):
-		res += random.choice(string.ascii_lowercase)
-	return res
+		r += random.choice(string.ascii_lowercase)
+	return r
 
 class ThreadingHTTPServer(ThreadingMixIn, BaseHTTPServer.HTTPServer):
 	pass
 
 class RequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 	def send_headers(self):
+		print str(self.path)
 		if self.path == "/":
 			app_log.info('[200] '+self.client_address[0]+' '+str(self.command)+' '+str(self.path)+'\n'+str(self.headers))
 			self.send_response(200)
@@ -96,7 +97,7 @@ JavaScript <b>отключен</b>, функционал ресурса дост
 			return
 					
 	def do_POST(self):
-		rand_url=rand_string()
+		rand_url=RND()
 		elements = self.send_headers()
 		if elements is None != "/upload":
 			app_log.info('*Dbg2 '+self.client_address[0])
