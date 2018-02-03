@@ -1,1 +1,1 @@
-#python
+Python 2.7
