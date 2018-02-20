@@ -1,2 +1,1 @@
-Python 2.7<br>
-&emsp;http  - HTTPs file server
+http  - HTTPs file server
