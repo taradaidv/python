@@ -14,8 +14,11 @@ import socket
 from logging.handlers import RotatingFileHandler
 import ssl
 
+
+link_URL="https://172.16.0.10"
 listening_ip="0.0.0.0"
 listening_port=8443
+
 
 def RND(n=8):
 	r = ""
@@ -41,6 +44,35 @@ class RequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			self.send_response(200)
 			self.send_header("Content-Type", "text/html; charset=UTF-8")
 			self.end_headers()
+		elif self.path == "/1.png":
+			self.send_response(200)
+			self.send_header("Content-Type", "image/jpeg")
+			self.end_headers()
+			i = open(os.path.dirname(os.path.abspath(__file__))+"/1.png", "rb")
+			shutil.copyfileobj(i, self.wfile)
+			i.close()
+		elif self.path == "/2.png":
+			self.send_response(200)
+			self.send_header("Content-Type", "image/jpeg")
+			self.end_headers()
+			i = open(os.path.dirname(os.path.abspath(__file__))+"/2.png", "rb")
+			shutil.copyfileobj(i, self.wfile)
+			i.close()
+		elif self.path == "/3.png":
+			self.send_response(200)
+			self.send_header("Content-Type", "image/jpeg")
+			self.end_headers()
+			i = open(os.path.dirname(os.path.abspath(__file__))+"/3.png", "rb")
+			shutil.copyfileobj(i, self.wfile)
+			i.close()
+		elif self.path == "/favicon.ico":
+			self.send_response(200)
+			self.send_header("Content-Type", "image/x-icon")
+			self.end_headers()
+			i = open(os.path.dirname(os.path.abspath(__file__))+"/favicon.ico", "rb")
+			shutil.copyfileobj(i, self.wfile)
+			i.close()
+	
 		elif self.path == "/ns":
 			app_log.info('[200] '+self.client_address[0]+' '+str(self.command)+' '+str(self.path)+'\n'+str(self.headers))
 			self.send_response(200)
@@ -123,7 +155,7 @@ JavaScript <b>отключен</b>, функционал ресурса дост
 			shutil.copyfileobj(form["file"].file, fdst)
 			fdst.close()
 			app_log.info('[200] '+self.client_address[0]+' '+str(self.command)+' '+rand_url+' - '+name+ext+' '+str(self.headers['content-length'])+'\n'+str(self.headers))
-			self.wfile.write('Файл <b>'+name+ext+'</b> загружен на сервер и доступен для скачивания по ссылке <a href="https://'+str(listening_ip)+':'+str(listening_port)+'/'+rand_url+'">https://'+str(listening_ip)+':'+str(listening_port)+'/'+rand_url+'<a/>')		
+			self.wfile.write('Файл <b>'+name+ext+'</b> загружен на сервер и доступен для скачивания по ссылке <a href="'+str(link_URL)+':'+str(listening_port)+'/'+rand_url+'">'+str(link_URL)+':'+str(listening_port)+'/'+rand_url+'<a/>')		
 		else:
 			app_log.info('*DUPL '+self.client_address[0]+' '+str(self.command)+' '+rand_url+' - '+name+ext+'\n'+str(self.headers))
 			self.wfile.write('<b>Повторите попытку отправки файла !</b>')
