@@ -4,10 +4,30 @@
 
 <meta charset="utf-8">
 <title>Автоматизированная cистема передачи файлов</title>
+	
 <style type="text/css">
 	
 
 
+			body { background-color:#fafafa;margin:0;padding:0;font-family:Arial,Times New Roman, Helvetica;font-size:14px}
+			
+			footer {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 2.5rem;
+	text-align: right;
+	background-color: #0079c2;
+	border-top: 1px solid #475b6d;
+	line-height: 2.45rem
+}
+			footer a { margin:0 5px 0 -3px;padding:5px 7px;vertical-align:middle;text-decoration:none }
+			footer a, footer a:link, footer a:visited, footer a:hover, footer a:active { color:#cae4fb }
+			footer a:hover { background:#3f5161 }
+			footer a:active { background:#91c8f6 }
+		
+	
 /* элемент с контентом */
 
 h2 {
@@ -27,13 +47,40 @@ h2 {
 	display: none;
   }
  
+.file-choose {
+
+	color: #0B0000;
+	height: 128px;
+	width: 128px;
+	background-image: url(2.png);
+	background-repeat: no-repeat;
+	background-size: 128px 128px;
+}
+
+.file-choose input[type="file"]{
+    display: none; 
+}
+.file-choose label {
+	display: block;
+	width: 100%;
+	height: 100%;
+	cursor: pointer;
+	text-align: center;
+}
+
+	
+.file-upload:hover {
+	background: #047ec8;
+	margin-top: 0px;
+}
+	
+	
 .file-upload {
 	position: relative;
 	overflow: hidden;
 	background: #0079c2;
 	color: #fff;
 	text-align: center;
-	font: 14px Arial, Helvetica, Times New Roman;
 	height: 38px;
 }
 
@@ -61,12 +108,13 @@ h2 {
 	-webkit-box-shadow: 0px 0px;
 	box-shadow: 0px 0px;
 }
-
-
 </style>
 </head>
  
 <body>
+	
+	
+	
 <noscript>
 <meta http-equiv="refresh" content="0;URL=/ns">
 JavaScript <b>отключен</b>, функционал ресурса доступен в ограниченном режиме.<br>
@@ -76,25 +124,21 @@ JavaScript <b>отключен</b>, функционал ресурса дост
 
 <script type="text/javascript">
 
-
 window.onload = function() {
-	document.getElementById("I").innerHTML = '<img src="1.png" width="128" height="128" alt=""/>';
-	
+	document.getElementById("I").innerHTML = 'Выберите файл';
   };
-  
+	
 
 function fileChange()
 {
     if(!document.getElementById("FA").files)
         return;
    
-    document.getElementById("upload").innerHTML ='<div class="file-upload"><label><input name="upload" type="button" class="button" onclick="uploadFile();" /><span>Отправить файл <b>'+document.getElementById("FA").files[0].name+'</b></span></label></div>';
+    document.getElementById("upload").innerHTML ='<div class="file-upload"><label><input name="upload" type="button" class="button" onclick="uploadFile();" /><span>Отправить</span></label></div>';
     document.getElementById("PB").innerHTML ='<progress value="0" id="progress" class="pr" ></progress>';
-    document.getElementById("text").innerHTML ="";
     document.getElementById("progress").value = 0;
-    document.getElementById("I").innerHTML = '<img src="2.png" width="128" height="128" alt=""/>';
-
-
+    document.getElementById("I").innerHTML = 'Выбран файл: <b>'+document.getElementById("FA").files[0].name+'</b>';
+	
 }
 
 var client = null;
@@ -121,7 +165,7 @@ function uploadFile()
     formData.append("file", file);
  
     client.onerror = function(e) {
-        alert("Ошибка");
+        document.getElementById("I").innerHTML ="Ошибка";
     };
     
 	 client.onloadend = function(e) {
@@ -130,12 +174,12 @@ function uploadFile()
 	};
     
 	client.onreadystatechange = function(e) {
-		document.getElementById("text").innerHTML =client.responseText;
+		document.getElementById("I").innerHTML =client.responseText;
     };
     
     client.onload = function(e) {
         prog.value = prog.max;
-        document.getElementById("I").innerHTML = '<img src="3.png" width="128" height="128" alt=""/>';
+       // document.getElementById("I").innerHTML = '<img src="3.png" width="128" height="128" alt=""/>';
 		document.getElementById("cancel").innerHTML = "";
 		document.getElementById("PB").innerHTML = "";
     };
@@ -144,13 +188,13 @@ function uploadFile()
 		var p = Math.round(100 / e.total * e.loaded);
         document.getElementById("progress").value = p;
 	    if (p==100){
-		    document.getElementById("text").innerHTML ="Ожидайте подтверждения ссылки";
+		    document.getElementById("I").innerHTML ="Файл загружен, ожидайте подтверждения ссылки";
 	    }
        	
     };
 	
 	client.onabort = function(e) {
-		alert("Передача файла "+document.getElementById("FA").files[0].name+" отменена");
+		document.getElementById("I").innerHTML ="Передача файла "+document.getElementById("FA").files[0].name+" отменена";
 		document.getElementById("cancel").innerHTML ="";
 		document.getElementById("upload").innerHTML ="";
 	};
@@ -173,21 +217,29 @@ function uploadAbort() {
 
 <center>
 	<h2>АВТОМАТИЗИРОВАННАЯ СИСТЕМА ПЕРЕДАЧИ ФАЙЛОВ</h2>
-	<div id="I"></div>
 	
-<form action="" method="post" enctype="multipart/form-data">
-<div class="file-upload">
-<label>
-<input type="file" name="file" onchange="fileChange();" id="FA">
-<span>Выбрать файл</span>
-</label>
-</div>
-</form>
+	<form action="" method="post" enctype="multipart/form-data">
+		<div class="file-choose">
+			<label>
+				<input type="file" name="file" onchange="fileChange();" id="FA">
+			</label>
+		</div>
+	<div id="I"></div>
+	</form>
+	
+	
+	
 <div id="PB"></div>
 <div id="upload"></div>
 <div id="cancel"></div>
 </center>
-<br>
-<div id="text"></div>
+
+<!--	<img src="1.png" width="128" height="128" alt=""/>
+<footer>
+			<a href="_blank" target="_blank">АВТОМАТИЗИРОВАННАЯ СИСТЕМА ПЕРЕДАЧИ ФАЙЛОВ-TEST</a>
+		
+		</footer>
+-->
+
 </body>
 </html>
