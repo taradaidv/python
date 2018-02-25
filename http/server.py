@@ -1,6 +1,7 @@
 #!/usr/bin/env python2.7
 # -*- coding: UTF-8 -*-
 import os
+import urllib
 from SocketServer import ThreadingMixIn
 import BaseHTTPServer
 import SimpleHTTPServer
@@ -31,9 +32,9 @@ class ThreadingHTTPServer(ThreadingMixIn, BaseHTTPServer.HTTPServer):
 
 class RequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 	def send_headers(self):
-		print str(self.path)
+		
 		if self.path == '/':
-			app_log.info('[200] '+self.client_address[0]+' '+str(self.command)+' '+str(self.path)+'\n'+str(self.headers))
+			app_log.info('[200] '+self.client_address[0]+' '+str(self.command)+' '+str(self.path)+' - '+str(self.headers.getheader('User-Agent')))
 			self.send_response(200)
 			self.send_header('Content-Type', 'text/html; charset=UTF-8')
 			self.end_headers()
@@ -63,8 +64,8 @@ class RequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 				#print self.path+" Either file is missing or is not readable"
 				self.send_response(404)
 				self.end_headers()
-		elif self.path == '/ns':
-			app_log.info('[200] '+self.client_address[0]+' '+str(self.command)+' '+str(self.path)+'\n'+str(self.headers))
+		elif self.path == '/0':
+			app_log.info('[200] '+self.client_address[0]+' '+str(self.command)+' '+str(self.path)+' - '+str(self.headers.getheader('User-Agent')))
 			self.send_response(200)
 			self.send_header('Content-Type', 'text/html; charset=UTF-8')
 			self.end_headers()
@@ -92,23 +93,16 @@ JavaScript <b>отключен</b>, функционал ресурса дост
 			try:
 				sn = os.listdir(f_url)
 			except OSError:
-				app_log.info('[404] '+self.client_address[0]+' '+str(self.command)+' '+str(self.path)+'\n'+str(self.headers))
+				app_log.info('[404] '+self.client_address[0]+' '+str(self.command)+' '+str(self.path)+' - '+str(self.headers.getheader('User-Agent')))
 				self.send_response(404)
 				self.end_headers()
 			else:
 				fn = sn[0]
-				app_log.info('[200] '+self.client_address[0]+' '+str(self.command)+' '+str(self.path)+' '+str(os.path.getsize(f_url+fn))+'\n'+str(self.headers))
+				app_log.info('[200] '+self.client_address[0]+' '+str(self.command)+' '+str(self.path)+' '+str(os.path.getsize(f_url+fn))+' - '+str(self.headers.getheader('User-Agent')))
 				self.send_response(200)
-				#self.send_header('Content-Type', 'text/html; charset=UTF-8')
 				self.send_header('Content-type', 'application/zip')
 				self.send_header('Content-length',os.path.getsize(f_url+fn))
-				#self.send_header('Content-Disposition', 'attachment; filename="'+fn+'"')
-				#%D0%BF%D1%80%D0%B8%D0%B2%D0%B5%D1%82
-				s='привет'
-				TEST=s.encode('UTF-8')	
-				print (TEST+'ZZZZZZZZZZZZZZZZ')
-				self.send_header('Content-Disposition', 'attachment; filename="'+fn+'"; filename*=UTF-8\'\'"'+TEST+'"')
-				
+				self.send_header('Content-Disposition', "attachment;  filename*=UTF-8''"+urllib.quote(fn))
 				self.send_header('Accept-Ranges', 'bytes')
 				self.end_headers()
 				f = open(f_url+fn, 'rb')
@@ -135,23 +129,23 @@ JavaScript <b>отключен</b>, функционал ресурса дост
 		name, ext = os.path.splitext(form['file'].filename)
 		path_part=root_folder+'/uploads/'+rand_url
 		if name == '':
-			app_log.info('*HACK '+self.client_address[0]+' '+str(self.command)+' '+str(self.path)+' - '+name+ext+'\n'+str(self.headers))
+			app_log.info('*HACK '+self.client_address[0]+' '+str(self.command)+' '+str(self.path)+' - '+name+ext+' - '+str(self.headers.getheader('User-Agent')))
 			return
 		if '/' in name:
-			app_log.info('*HACK '+self.client_address[0]+' '+str(self.command)+' '+rand_url+' - '+name+ext+'\n'+str(self.headers))
+			app_log.info('*HACK '+self.client_address[0]+' '+str(self.command)+' '+rand_url+' - '+name+ext+' - '+str(self.headers.getheader('User-Agent')))
 			return
 		if '<' in name:
-			app_log.info('*HACK '+self.client_address[0]+' '+str(self.command)+' '+rand_url+' - '+name+ext+'\n'+str(self.headers))
+			app_log.info('*HACK '+self.client_address[0]+' '+str(self.command)+' '+rand_url+' - '+name+ext+' - '+str(self.headers.getheader('User-Agent')))
 			return
 		if not os.path.exists(path_part):
 			os.makedirs(path_part)
 			fdst = open(path_part + '/'+ name + ext, 'wb')
 			shutil.copyfileobj(form['file'].file, fdst)
 			fdst.close()
-			app_log.info('[200] '+self.client_address[0]+' '+str(self.command)+' '+rand_url+' - '+name+ext+' '+str(self.headers['content-length'])+'\n'+str(self.headers))
+			app_log.info('[200] '+self.client_address[0]+' '+str(self.command)+' '+rand_url+' - '+name+ext+' '+str(self.headers['content-length'])+' - '+str(self.headers.getheader('User-Agent')))
 			self.wfile.write('Файл <b>'+name+ext+'</b> загружен на сервер и доступен по ссылке <br><a href="'+rand_url+'">'+rand_url+'<a/>')	
 		else:
-			app_log.info('*DUPL '+self.client_address[0]+' '+str(self.command)+' '+rand_url+' - '+name+ext+'\n'+str(self.headers))
+			app_log.info('*DUPL '+self.client_address[0]+' '+str(self.command)+' '+rand_url+' - '+name+ext+' - '+str(self.headers.getheader('User-Agent')))
 			self.wfile.write('<b>Повторите попытку отправки файла !</b>')
 			
 if __name__ == '__main__':
