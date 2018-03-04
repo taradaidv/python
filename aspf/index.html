@@ -1,15 +1,26 @@
 <!doctype html>
 <html>
 <head>
-
 <meta charset="utf-8">
 <title>Автоматизированная cистема передачи файлов</title>
-	
+
 <style type="text/css">
+
+@charset "UTF-8";
 	
 
 
-			body { background-color:#fafafa;margin:0;padding:0;font-family:Arial,Times New Roman, Helvetica;font-size:14px}
+			body {
+	background-color: #0079c2;
+	margin: 0;
+	padding: 0;
+	font-family: Arial,Times New Roman, Helvetica;
+	font-size: 14px
+}
+.radio {
+	text-align: left;
+	width: 70%;
+}
 			
 			footer {
 	position: absolute;
@@ -18,9 +29,7 @@
 	bottom: 0;
 	height: 2.5rem;
 	text-align: right;
-	background-color: #0079c2;
-	border-top: 1px solid #475b6d;
-	line-height: 2.45rem
+
 }
 			footer a { margin:0 5px 0 -3px;padding:5px 7px;vertical-align:middle;text-decoration:none }
 			footer a, footer a:link, footer a:visited, footer a:hover, footer a:active { color:#cae4fb }
@@ -38,7 +47,6 @@ h2 {
 	width: 100%;
 	padding: 6px 20px 6px 70px;
 	margin: 30px 10px 10px -71px;
-	color: #fff;
 	background-color: #0079c2;
 	
 }
@@ -52,7 +60,7 @@ h2 {
 	color: #0B0000;
 	height: 128px;
 	width: 128px;
-	background-image: url(2.png);
+	background-image: url(/img/2.png);
 	background-repeat: no-repeat;
 	background-size: 128px 128px;
 }
@@ -78,10 +86,11 @@ h2 {
 .file-upload {
 	position: relative;
 	overflow: hidden;
-	background: #0079c2;
+	background-color: #08517C;
 	color: #fff;
 	text-align: center;
 	height: 38px;
+	width: 200px;
 }
 
 .file-upload:hover {
@@ -104,16 +113,38 @@ h2 {
 }
 
 .pr {
-	width: 99%;
+	width: 390px;
 	-webkit-box-shadow: 0px 0px;
 	box-shadow: 0px 0px;
 }
+.center {
+	width: 400px;
+	border-radius: 15px;
+	background-color: #B6E2FF;
+	margin-top: 5%;
+	-webkit-box-shadow: 0px 0px;
+	box-shadow: 0px 0px;
+	border-collapse: collapse;
+	text-shadow: 0px 0px;
+	height: 400px;
+}
+
+.text {
+	text-align: left;
+	width: 70%;
+}
 </style>
+
+	
+<!--
+<link href="css/main.css" rel="stylesheet" type="text/css">
+-->
+
 </head>
  
 <body>
-	
-	
+
+
 	
 <noscript>
 <meta http-equiv="refresh" content="0;URL=/0">
@@ -122,10 +153,49 @@ JavaScript <b>отключен</b>, функционал ресурса дост
 </noscript>
 
 
-<script type="text/javascript">
 
+
+<center>
+	
+
+	
+	
+  <form action="" method="post" enctype="multipart/form-data" class="center">
+	  <br>
+	  <h2>АВТОМАТИЗИРОВАННАЯ СИСТЕМА ПЕРЕДАЧИ ФАЙЛОВ</h2>
+
+	  <div id="IMG"></div>
+	  <div id="S"></div>
+    
+	
+<div id="I"></div>
+	  <div id="PB"></div>
+<div id="upload"></div>
+<div id="cancel"></div>
+	  <div id="R"></div>
+	  <br>
+
+   
+  </form>
+  
+
+	
+
+
+
+</center>
+
+<!--	<img src="1.png" width="128" height="128" alt=""/>
+<footer>
+			<a href="_blank" target="_blank">АВТОМАТИЗИРОВАННАЯ СИСТЕМА ПЕРЕДАЧИ ФАЙЛОВ-TEST</a>
+		
+		</footer>
+-->
+
+<script type="text/javascript">
 window.onload = function() {
-	document.getElementById("I").innerHTML = 'Выберите файл';
+	document.getElementById("S").innerHTML = '<div class="file-upload"><label><input type="file" name="file" onchange="fileChange();" id="FA"><span>Выберите файл</span></label></div><br>';
+	document.getElementById("IMG").innerHTML = '<img src="img/2.png" width="128" height="128" alt=""/>';
   };
 	
 
@@ -137,7 +207,9 @@ function fileChange()
     document.getElementById("upload").innerHTML ='<div class="file-upload"><label><input name="upload" type="button" class="button" onclick="uploadFile();" /><span>Отправить</span></label></div>';
     document.getElementById("PB").innerHTML ='<progress value="0" id="progress" class="pr" ></progress>';
     document.getElementById("progress").value = 0;
-    document.getElementById("I").innerHTML = 'Выбран файл: <b>'+document.getElementById("FA").files[0].name+'</b>';
+    document.getElementById("I").innerHTML = '<b>'+document.getElementById("FA").files[0].name+'</b>';
+	document.getElementById("IMG").innerHTML ='';
+	document.getElementById("R").innerHTML ='<p class="radio"><input  type="radio" name="RadioGroup1" value="radio" id="RadioGroup1_0" checked>Ссылка доступна  в течении 3 часов</label><br><label><input type="radio" name="RadioGroup1" value="radio" id="RadioGroup1_1">Ссылка доступна  в течении 24 часов</label><br><label><input type="radio" name="RadioGroup1" value="radio" id="RadioGroup1_2">Ссылка доступна  в течении 7 дней </label><br></p>';
 	
 }
 
@@ -212,34 +284,7 @@ function uploadAbort() {
 		client.abort();
 }
 
-
 </script>
-
-<center>
-	<h2>АВТОМАТИЗИРОВАННАЯ СИСТЕМА ПЕРЕДАЧИ ФАЙЛОВ</h2>
 	
-	<form action="" method="post" enctype="multipart/form-data">
-		<div class="file-choose">
-			<label>
-				<input type="file" name="file" onchange="fileChange();" id="FA">
-			</label>
-		</div>
-	<div id="I"></div>
-	</form>
-	
-	
-	
-<div id="PB"></div>
-<div id="upload"></div>
-<div id="cancel"></div>
-</center>
-
-<!--	<img src="1.png" width="128" height="128" alt=""/>
-<footer>
-			<a href="_blank" target="_blank">АВТОМАТИЗИРОВАННАЯ СИСТЕМА ПЕРЕДАЧИ ФАЙЛОВ-TEST</a>
-		
-		</footer>
--->
-
 </body>
 </html>

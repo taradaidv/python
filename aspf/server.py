@@ -32,7 +32,6 @@ class ThreadingHTTPServer(ThreadingMixIn, BaseHTTPServer.HTTPServer):
 
 class RequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 	def send_headers(self):
-		
 		if self.path == '/':
 			app_log.info('[200] '+self.client_address[0]+' '+str(self.command)+' '+str(self.path)+' - '+str(self.headers.getheader('User-Agent')))
 			self.send_response(200)
@@ -52,6 +51,7 @@ class RequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			i = open(root_folder+'/favicon.ico', 'rb')
 			shutil.copyfileobj(i, self.wfile)
 			i.close()
+			'''
 		elif '.png' in self.path[-4:]:
 			if os.path.isfile(root_folder+self.path) and os.access(root_folder+self.path, os.R_OK):
 				self.send_response(200)
@@ -62,6 +62,64 @@ class RequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 				i.close()
 			else:
 				#print self.path+" Either file is missing or is not readable"
+				self.send_response(404)
+				self.end_headers()
+			'''
+		elif '/img' in self.path[:4]:
+			if os.path.isfile(root_folder+self.path) and os.access(root_folder+self.path, os.R_OK):
+				self.send_response(200)
+				self.send_header("Content-Type", "image/png")
+				self.end_headers()
+				i = open(os.path.dirname(os.path.abspath(__file__))+'/img'+self.path[4:], "rb")
+				shutil.copyfileobj(i, self.wfile)
+				i.close()
+			else:
+				#print self.path+" Either file is missing or is not readable"
+				self.send_response(404)
+				self.end_headers()
+		elif '/css' in self.path[:4]:
+			if os.path.isfile(root_folder+self.path) and os.access(root_folder+self.path, os.R_OK):
+				self.send_response(200)
+				self.send_header("Content-Type", "text/css; charset=utf-8")
+				self.end_headers()
+				i = open(os.path.dirname(os.path.abspath(__file__))+'/css'+self.path[4:], "rb")
+				shutil.copyfileobj(i, self.wfile)
+				i.close()
+			else:
+				#print self.path+" Either file is missing or is not readable"
+				self.send_response(404)
+				self.end_headers()
+		elif '/jQueryAssets' in self.path[:13]:
+			if os.path.isfile(root_folder+self.path) and os.access(root_folder+self.path, os.R_OK):
+				self.send_response(200)
+				self.send_header("Content-Type", "text/css; charset=utf-8")
+				self.end_headers()
+				i = open(os.path.dirname(os.path.abspath(__file__))+'/jQueryAssets'+self.path[13:], "rb")
+				shutil.copyfileobj(i, self.wfile)
+				i.close()
+			else:
+				self.send_response(404)
+				self.end_headers()
+		elif '/jQueryAssets/images' in self.path[:20]:
+			if os.path.isfile(root_folder+self.path) and os.access(root_folder+self.path, os.R_OK):
+				self.send_response(200)
+				self.send_header("Content-Type", "image/png")
+				self.end_headers()
+				i = open(os.path.dirname(os.path.abspath(__file__))+'/jQueryAssets/images'+self.path[20:], "rb")
+				shutil.copyfileobj(i, self.wfile)
+				i.close()
+			else:
+				self.send_response(404)
+				self.end_headers()
+		elif '/images' in self.path[:7]:
+			if os.path.isfile(root_folder+self.path) and os.access(root_folder+self.path, os.R_OK):
+				self.send_response(200)
+				self.send_header("Content-Type", "image/png")
+				self.end_headers()
+				i = open(os.path.dirname(os.path.abspath(__file__))+'/images'+self.path[7:], "rb")
+				shutil.copyfileobj(i, self.wfile)
+				i.close()
+			else:
 				self.send_response(404)
 				self.end_headers()
 		elif self.path == '/0':
@@ -89,7 +147,7 @@ JavaScript <b>отключен</b>, функционал ресурса дост
 </html>
 ''') 
 		else:
-			f_url=root_folder+'/uploads/'+self.path+'/'
+			f_url=root_folder+'/uploads/'+self.path+'/file/'
 			try:
 				sn = os.listdir(f_url)
 			except OSError:
@@ -109,7 +167,6 @@ JavaScript <b>отключен</b>, функционал ресурса дост
 				shutil.copyfileobj(f, self.wfile)
 				f.close()			
 		return self.path	
-		
 	def do_GET(self):
 		elements = self.send_headers()
 		if elements is None:
@@ -127,7 +184,7 @@ JavaScript <b>отключен</b>, функционал ресурса дост
 		headers=self.headers,
 		environ={'REQUEST_METHOD': 'POST'})           
 		name, ext = os.path.splitext(form['file'].filename)
-		path_part=root_folder+'/uploads/'+rand_url
+		path_part=root_folder+'/uploads/'+rand_url+'/file/'
 		if name == '':
 			app_log.info('*HACK '+self.client_address[0]+' '+str(self.command)+' '+str(self.path)+' - '+name+ext+' - '+str(self.headers.getheader('User-Agent')))
 			return
@@ -139,14 +196,15 @@ JavaScript <b>отключен</b>, функционал ресурса дост
 			return
 		if not os.path.exists(path_part):
 			os.makedirs(path_part)
-			fdst = open(path_part + '/'+ name + ext, 'wb')
+			fdst = open(path_part + name + ext, 'wb')
 			shutil.copyfileobj(form['file'].file, fdst)
 			fdst.close()
 			app_log.info('[200] '+self.client_address[0]+' '+str(self.command)+' '+rand_url+' - '+name+ext+' '+str(self.headers['content-length'])+' - '+str(self.headers.getheader('User-Agent')))
-			self.wfile.write('Файл <b>'+name+ext+'</b> загружен на сервер и доступен по ссылке <br><a href="'+rand_url+'">'+rand_url+'<a/>')	
+			self.wfile.write('<br>Файл <b>'+name+ext+'</b> загружен на сервер и доступен по ссылке:<br><a href="'+rand_url+'">'+'/'.join(self.headers.getheader('Referer').split('/')[0::2])+'/'+rand_url+'<a/>')	#alternative self.headers.getheader('Origin')
+
 		else:
 			app_log.info('*DUPL '+self.client_address[0]+' '+str(self.command)+' '+rand_url+' - '+name+ext+' - '+str(self.headers.getheader('User-Agent')))
-			self.wfile.write('<b>Повторите попытку отправки файла !</b>')
+			self.wfile.write('<b>Файл загружен частично, повторите отправку !</b>')
 			
 if __name__ == '__main__':
 	log_dir=root_folder+'/logs/'
